@@ -1,0 +1,8 @@
+.DS_Store
+node_modules
+package.json
+docs/.vuepress/dist
+yarn.lock
+package-lock.json
+*.txt
+visual
