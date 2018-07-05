@@ -1,26 +1,7 @@
-var DiagonalMovement = {
-  Always: 1,
-  Never: 2,
-  IfAtMostOneObstacle: 3,
-  OnlyWhenNoObstacles: 4
-};
-
-/**
- * Backtrace according to the parent records and return the path.
- * (including both start and end nodes)
- * @param {Node} node End node
- * @return {Array<Array<number>>} the path
- */
-function backtrace(node) {
-  var path = [
-    [node.x, node.y]
-  ];
-  while (node.parent) {
-    node = node.parent;
-    path.push([node.x, node.y]);
-  }
-  return path.reverse();
-}
+import {
+  DiagonalMovement,
+  backtrace
+} from './helper.js'
 
 /**
  * Breadth-First-Search path finder.

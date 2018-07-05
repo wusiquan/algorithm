@@ -1,12 +1,14 @@
 import * as d3 from 'd3'
 import { Node, Grid } from './grid'
 import BreadthFirstFinder from './bfs'
+import dijkastra from './dijkstra'
 
 // https://vuejsexamples.com/
 // https://codepen.io/shshaw/pen/vJNMQY
 // https://greensock.com/svg-tips
 import {
-  TweenMax
+  TweenMax,
+  TimelineMax
 } from 'gsap'
 
 // https://bost.ocks.org/mike/join/
@@ -20,15 +22,18 @@ class View {
     this.numCols = numCols
     this.nodeSize = nodeSize
     this.nodeStyle = {
+      // 白色
       normal: {
         'fill': '#fff',
         'stroke': '#000',
         'stroke-opacity': 0.2
       },
+      // 偏绿色
       opened: {
         fill: '#98fb98',
         'stroke-opacity': 0.2
       },
+      // 偏青色
       closed: {
         fill: '#afeeee',
         'stroke-opacity': 0.2
@@ -39,11 +44,7 @@ class View {
   // https://stackoverflow.com/questions/15580300/proper-way-to-draw-gridlines
   // https://engineering.velocityapp.com/building-a-grid-ui-with-d3-js-v4-p1-c2da5ed016
   generateGridData() {
-    let {
-      numRows,
-      numCols,
-      nodeSize
-    } = this
+    let { numRows, numCols, nodeSize } = this
     let xPos = 0.5
     let yPos = 0.5
     let data = []
@@ -79,17 +80,16 @@ class View {
       .data(this.data)
       .enter().append("g")
       .attr("class", 'row')
-    // console.log(this.nodeStyle.normal)
 
-    let column = row.selectAll(".square")
-      .data(function (d) {
-        return d;
+    let wrapper = row.selectAll(".wrapper")
+      .data(function (d, index) {
+        return d
       })
       .enter()
       .append("g")
-      .attr('class', 'column')
+      .attr('class', 'wrapper')
     
-    column
+    wrapper
       .append('rect')
       .attr('class', 'square')
       .attr('id', (d, i) => {
@@ -114,15 +114,19 @@ class View {
       .style('stroke-width', 1)
   }
 
+  // TODO:似乎不太容易和数据this.data关联上
   tweenNodes(operations) {
+    let maxIndex = operations.length - 1
     let i = 0
+    // let tl = new TimelineMax()
     while(operations.length) {
       let op = operations.shift()
       let x = op.x
       let y = op.y
       i++
       let styleObj = this.getStyle(op.attr)
-      TweenMax.to(`#square${y}-${x}`, 0.5, { fill: styleObj.fill, delay: i * 0.1 })
+      TweenMax.to(`#square${x}-${y}`, 1, { fill: styleObj.fill, delay: i / maxIndex * 8 })
+      // tl.to(`#square${x}-${y}`, 0.1, { fill: styleObj.fill })
     }
   }
 
@@ -137,7 +141,7 @@ class View {
         styleObj = this.nodeStyle.opened
         break
       
-        default:
+      default:
         console.error('unsupported operation: ' + attr)
         return;
     }
@@ -145,15 +149,17 @@ class View {
     return styleObj
   }
 
+  // 设置起点
   static setStartPos(row, col) {
-    this.setPos(col, row, '#00dd00')
+    this.setPos(row, col, '#00dd00')
   }
 
+  // 设置终点
   static setEndPos(row, col) {
-    this.setPos(col, row, '#ee4400')
+    this.setPos(row, col, '#ee4400')
   }
 
-  static setPos(col, row, color) {
+  static setPos(row, col, color) {
     d3.select(`#square${row}-${col}`)
       .transition()
       .duration(500)
@@ -168,7 +174,7 @@ class Controller {
     this.numRows = Math.ceil(height / nodeSize)
     this.numCols = Math.ceil(width / nodeSize)
     
-    let gridGraph = this.createGridGraph()
+    this.grid = this.createGridGraph()
 
     this.view = new View(this.numRows, this.numCols, nodeSize)
     this.view.generateGrid()
@@ -191,7 +197,7 @@ class Controller {
   // 生成gridgraph数据结构
   createGridGraph() {
     this.hookPathFinding()
-    this.grid = new Grid(this.numRows, this.numCols)
+    return new Grid(this.numRows, this.numCols)
   }
 
   /**
@@ -243,9 +249,13 @@ class Controller {
   }
 
   search() {
-    let finder = new BreadthFirstFinder({ allowDiagonal: false })
-    this.path = finder.findPath(this.startX, this.startY, this.endX, this.endY, this.grid)
+    // bfs
+    // let finder = new BreadthFirstFinder({ allowDiagonal: false })
+    // this.path = finder.findPath(this.startX, this.startY, this.endX, this.endY, this.grid)
+    // this.view.tweenNodes(this.operations)
     
+    // dijkastra
+    dijkastra(this.startX, this.startY, this.endX, this.endY, this.grid)
     this.view.tweenNodes(this.operations)
   }
 }
@@ -253,12 +263,9 @@ class Controller {
 let controller = new Controller()
 controller.setStartPos(10, 10)
 controller.setEndPos(10, 15)
-
 setTimeout(() => {
   controller.search()
 }, 1000)
-
-
 
 
 
@@ -274,3 +281,57 @@ setTimeout(() => {
 //   .attr("stroke", "blue")
 //   .attr("stroke-width", 1.0)
 //   .attr("fill", "none")
+
+
+
+
+// 测试pq
+// const PQueue = require('es6-priorityqueue').default
+
+// let a = {
+//   d: 10
+// }
+// let b = {
+//   d: 9
+// }
+// let c = {
+//   d: 14
+// }
+// let d = {
+//   d: 8
+// }
+// let e = {
+//   d: 16
+// }
+// let f = {
+//   d: 3
+// }
+// let g = {
+//   d: 1
+// }
+// let h = {
+//   d: 2
+// }
+// let i = {
+//   d: 4
+// }
+// let j = {
+//   d: 7
+// }
+
+// let pQueue = new PQueue([ a, b, c, d, e, f, g, h, i, j ], {
+//   comparator: (nodeA, nodeB) => {
+//     if (nodeA.d === nodeB.d) return 0
+//     if (nodeA.d > nodeB.d) {
+//       return 1
+//     } else {
+//       return -1
+//     }
+//   }
+// })
+
+// console.log(pQueue.insert({ d: 5 }))
+
+
+
+
