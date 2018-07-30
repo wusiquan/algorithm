@@ -1,3 +1,6 @@
+import Phaser from 'phaser'
+import EasyStar from 'easystarjs'
+
 class Game extends Phaser.Scene {
   constructor() {
     super({

@@ -1,11 +1,13 @@
 const path = require('path')
-// const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   mode: 'development',
   devtool: 'cheap-source-map',
   entry: {
-    graphsearch: './examples/graphsearch/index.js'
+    graphsearch: './examples/graphsearch/index.js',
+    astardemo: './examples/astardemo/index.js'
   },
 
   output: {
@@ -21,28 +23,38 @@ module.exports = {
         include: path.resolve(__dirname, 'src', 'js'),
         use: 'babel-loader'
       },
-      // {
-      //   test: /\.(png|jpg|gif)$/,
-      //   use: [
-      //     {
-      //       loader: 'file-loader',
-      //       options: {
-      //         name: '[name].[ext]',
-      //         outputPath: 'images/'
-      //         // limit: 2048,
-      //         // fallback: 'file-loader'
-      //       }
-      //     }
-      //   ]
-      // }
+      {
+        test: /\.(png|jpg|gif)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'assets/'
+              // limit: 2048,
+              // fallback: 'file-loader'
+            }
+          }
+        ]
+      }
     ]
   },
   plugins: [
-    // new HtmlWebpackPlugin({
-    //   title: "算法",
-    //   // favicon: './src/images/favicon.ico',
-    //   template: path.resolve(__dirname, './examples/index.html')
-    // })
+    new CopyWebpackPlugin([
+      { from: 'examples/astardemo/assets', to: 'assets' }
+    ]),
+    new HtmlWebpackPlugin({
+      inject: true,
+      chunks: ['graphsearch'],
+      filename: 'graphsearch.html',
+      template: 'examples/graphsearch/index.html'
+    }),
+    new HtmlWebpackPlugin({
+      inject: true,
+      chunks: ['astardemo'],
+      filename: 'astardemo.html',
+      template: 'examples/astardemo/index.html'
+    })
   ],
 
   devServer: {
