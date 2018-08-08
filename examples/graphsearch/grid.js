@@ -34,7 +34,8 @@ export function Node(x, y, walkable) {
  * @param {number} height Number of rows of the grid.
  * @param {Array<Array<(number|boolean)>>} [matrix] - A 0-1 matrix
  *     representing the walkable status of the nodes(0 or false for walkable).
- *     If the matrix is not supplied, all the nodes will be walkable.  */
+ *     If the matrix is not supplied, all the nodes will be walkable.
+ */
 export function Grid(width_or_matrix, height, matrix) {
   var width;
 

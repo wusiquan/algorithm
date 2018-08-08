@@ -12,9 +12,9 @@ import {
 } from 'gsap'
 
 // https://bost.ocks.org/mike/join/
-var containerStyle = document.querySelector('html').getBoundingClientRect();
-const width = containerStyle.width
-const height = containerStyle.height
+var containerRect = document.querySelector('html').getBoundingClientRect()
+const width = containerRect.width
+const height = containerRect.height
 
 class View {
   constructor(numRows, numCols, nodeSize = 30) {
@@ -30,11 +30,13 @@ class View {
       },
       // 偏绿色
       opened: {
+        // fill: '#aaa',
         fill: '#98fb98',
         'stroke-opacity': 0.2
       },
       // 偏青色
       closed: {
+        // fill: '#000',
         fill: '#afeeee',
         'stroke-opacity': 0.2
       }
@@ -174,9 +176,14 @@ class Controller {
     this.numRows = Math.ceil(height / nodeSize)
     this.numCols = Math.ceil(width / nodeSize)
     
-    this.grid = this.createGridGraph()
+    // 必须先hook 
+    this.hookPathFinding()
 
+    // 生成gridgraph数据结构
+    this.grid = new Grid(this.numRows, this.numCols)
+    
     this.view = new View(this.numRows, this.numCols, nodeSize)
+    
     this.view.generateGrid()
   }
 
@@ -192,12 +199,6 @@ class Controller {
     this.endX = gridX
     this.endY = gridY
     View.setEndPos(gridX, gridY)
-  }
-
-  // 生成gridgraph数据结构
-  createGridGraph() {
-    this.hookPathFinding()
-    return new Grid(this.numRows, this.numCols)
   }
 
   /**
@@ -267,8 +268,6 @@ setTimeout(() => {
   controller.search()
 }, 1000)
 
-
-
 // var p = d3.path()
 // p.moveTo(100, 100)
 // p.lineTo(200, 100)
@@ -281,57 +280,3 @@ setTimeout(() => {
 //   .attr("stroke", "blue")
 //   .attr("stroke-width", 1.0)
 //   .attr("fill", "none")
-
-
-
-
-// 测试pq
-// const PQueue = require('es6-priorityqueue').default
-
-// let a = {
-//   d: 10
-// }
-// let b = {
-//   d: 9
-// }
-// let c = {
-//   d: 14
-// }
-// let d = {
-//   d: 8
-// }
-// let e = {
-//   d: 16
-// }
-// let f = {
-//   d: 3
-// }
-// let g = {
-//   d: 1
-// }
-// let h = {
-//   d: 2
-// }
-// let i = {
-//   d: 4
-// }
-// let j = {
-//   d: 7
-// }
-
-// let pQueue = new PQueue([ a, b, c, d, e, f, g, h, i, j ], {
-//   comparator: (nodeA, nodeB) => {
-//     if (nodeA.d === nodeB.d) return 0
-//     if (nodeA.d > nodeB.d) {
-//       return 1
-//     } else {
-//       return -1
-//     }
-//   }
-// })
-
-// console.log(pQueue.insert({ d: 5 }))
-
-
-
-

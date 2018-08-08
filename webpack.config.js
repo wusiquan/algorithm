@@ -39,6 +39,7 @@ module.exports = {
       }
     ]
   },
+  // https://github.com/jantimon/html-webpack-plugin/issues/218
   plugins: [
     new CopyWebpackPlugin([
       { from: 'examples/astardemo/assets', to: 'assets' }
