@@ -65,16 +65,20 @@ export default class Graph {
       vNode = this.addVertex(v)
     }
 
+    this._createEdge(u, v, weight)
+    uNode.addEdge(v, weight)
+    if (!this.directed) {
+      vNode.addEdge(u, weight)
+      this._createEdge(v, u, weight)
+    }
+  }
+
+  _createEdge(u, v, weight) {
     let edgeKey = GraphEdge.getKey(u, v)
     if (this.edges[edgeKey]) {
       throw new Error('Edge ' + edgeKey + ' has already been added before')
     } else {
       this.edges[edgeKey] = new GraphEdge(u, v, weight) 
-    }
-
-    uNode.addEdge(v, weight)
-    if (!this.directed) {
-      vNode.addEdge(u, weight)
     }
   }
 
@@ -97,7 +101,7 @@ export default class Graph {
     //   ret = true 
     // }
 
-    if (this.edges[GridEdge.getKey(u, v)]) {
+    if (this.edges[GraphEdge.getKey(u, v)]) {
       return true
     }
     
@@ -105,6 +109,6 @@ export default class Graph {
   }
 
   getEdge(u, v) {
-    return this.edges[GridEdge.getKey(u, v)]
+    return this.edges[GraphEdge.getKey(u, v)]
   }
 }

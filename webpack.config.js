@@ -7,7 +7,8 @@ module.exports = {
   devtool: 'cheap-source-map',
   entry: {
     graphsearch: './examples/graphsearch/index.js',
-    astardemo: './examples/astardemo/index.js'
+    astardemo: './examples/astardemo/index.js',
+    prim: './examples/prim/index.js'
   },
 
   output: {
@@ -55,6 +56,12 @@ module.exports = {
       chunks: ['astardemo'],
       filename: 'astardemo.html',
       template: 'examples/astardemo/index.html'
+    }),
+    new HtmlWebpackPlugin({
+      inject: true,
+      chunks: ['prim'],
+      filename: 'prim.html',
+      template: 'examples/prim/index.html'
     })
   ],
 
